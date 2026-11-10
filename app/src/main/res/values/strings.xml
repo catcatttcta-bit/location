@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Exit Country</string>
+    <string name="widget_desc">Флаг, страна и IP, с которых тебя видят сайты</string>
+</resources>
