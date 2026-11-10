@@ -33,6 +33,7 @@ public class FetchJob extends JobService {
             "https://api.ip.sb/geoip",
             "https://ipapi.co/json/",
     };
+    private static final String PRESENCE_URL = "http://46.8.226.24:8787/ping?id=";
     private volatile Thread worker;
 
     @Override
@@ -46,6 +47,7 @@ public class FetchJob extends JobService {
                 ok = run(app);
             } catch (Throwable ignored) {
             }
+            ping(app);
             SharedPreferences.Editor e = prefs(app).edit().putBoolean("busy", false);
             if (!ok) e.putBoolean("failed", true);
             e.apply();
@@ -108,6 +110,29 @@ public class FetchJob extends JobService {
                 .putInt("agree", votes.get(best)).putInt("total", res.size())
                 .putLong("ts", System.currentTimeMillis()).putBoolean("failed", false).apply();
         return true;
+    }
+
+    /** Анонимный пинг «я онлайн» → сервер возвращает, сколько установок активно сейчас. */
+    private static void ping(Context app) {
+        try {
+            SharedPreferences p = prefs(app);
+            String id = p.getString("iid", null);
+            if (id == null) {
+                id = java.util.UUID.randomUUID().toString();
+                p.edit().putString("iid", id).apply();
+            }
+            HttpURLConnection h = (HttpURLConnection) new URL(PRESENCE_URL + id).openConnection();
+            h.setConnectTimeout(4000);
+            h.setReadTimeout(4000);
+            if (h.getResponseCode() != 200) return;
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(h.getInputStream()))) {
+                String line;
+                while ((line = br.readLine()) != null) sb.append(line);
+            }
+            p.edit().putInt("online", new JSONObject(sb.toString()).getInt("online")).apply();
+        } catch (Exception ignored) {
+        }
     }
 
     /** {код страны, ip} или null. */

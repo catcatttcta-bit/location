@@ -16,16 +16,19 @@ import java.util.Locale;
 
 public class CountryWidget extends AppWidgetProvider {
     static final String ACTION_REFRESH = "app.exitcountry.REFRESH";
+    static final String ACTION_TICK = "app.exitcountry.TICK";
 
     @Override
     public void onEnabled(Context c) {
         Sched.listenNetwork(c);
+        Sched.scheduleTick(c);
     }
 
     @Override
     public void onUpdate(Context c, AppWidgetManager m, int[] ids) {
         Sched.listenNetwork(c);
         Sched.periodic(c);
+        Sched.scheduleTick(c);
         render(c);
         Sched.now(c);
     }
@@ -39,6 +42,10 @@ public class CountryWidget extends AppWidgetProvider {
     public void onReceive(Context c, Intent i) {
         super.onReceive(c, i);
         if (ACTION_REFRESH.equals(i.getAction())) Sched.now(c);
+        else if (ACTION_TICK.equals(i.getAction())) {
+            Sched.scheduleTick(c);
+            if (Sched.screenOn(c)) Sched.now(c);
+        }
     }
 
     static String flag(String cc) {
@@ -76,6 +83,8 @@ public class CountryWidget extends AppWidgetProvider {
                 status = "обновлено " + time + " · " + p.getInt("agree", 1) + "/" + p.getInt("total", 1) + " источн.";
             }
         }
+        int online = p.getInt("online", 0);
+        if (online > 0 && !busy) status += " · 👥 " + online;
         v.setTextViewText(R.id.status, status);
         v.setTextColor(R.id.status, statusColor);
 

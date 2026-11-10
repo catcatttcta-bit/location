@@ -1,5 +1,6 @@
 package app.exitcountry;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -10,6 +11,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Build;
+import android.os.PowerManager;
+import android.os.SystemClock;
 
 /** Планирование обновлений. Сеть слушаем через PendingIntent, работу делаем в JobService (а не в receiver). */
 final class Sched {
@@ -42,8 +45,28 @@ final class Sched {
         js.schedule(base(c, JOB_PERIODIC).setPeriodic(15 * 60 * 1000L).build());
     }
 
+    static final long TICK_MS = 60_000L;
+
+    private static PendingIntent tickIntent(Context c) {
+        return PendingIntent.getBroadcast(c, 2,
+                new Intent(c, CountryWidget.class).setAction(CountryWidget.ACTION_TICK),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    /** Следующий тик через минуту. JobScheduler чаще 15 мин не умеет, поэтому цепочка будильников. */
+    static void scheduleTick(Context c) {
+        c.getSystemService(AlarmManager.class).setAndAllowWhileIdle(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + TICK_MS, tickIntent(c));
+    }
+
+    /** Экран выключен — не жжём батарею и трафик. */
+    static boolean screenOn(Context c) {
+        return c.getSystemService(PowerManager.class).isInteractive();
+    }
+
     static void cancelAll(Context c) {
         c.getSystemService(JobScheduler.class).cancelAll();
+        c.getSystemService(AlarmManager.class).cancel(tickIntent(c));
     }
 
     /** Сеть/VPN сменились → NetReceiver (работает, даже когда процесс не запущен). */

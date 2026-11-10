@@ -1,0 +1,16 @@
+[Unit]
+Description=Exit Country Widget online counter
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/exit-presence/presence.py
+Restart=always
+DynamicUser=yes
+MemoryMax=64M
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
