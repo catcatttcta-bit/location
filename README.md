@@ -16,7 +16,7 @@
 ./gradlew assembleDebug   # нужен Android SDK (sdk.dir в local.properties)
 ```
 
-APK: `app/build/outputs/apk/debug/app-debug.apk`. Также собирается в GitHub Actions («Build APK»).
+APK: `app/build/outputs/apk/release/app-release.apk` (`./gradlew assembleRelease`).
 
 ## Установка
 
