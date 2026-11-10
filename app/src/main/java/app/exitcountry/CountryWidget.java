@@ -62,18 +62,18 @@ public class CountryWidget extends AppWidgetProvider {
         RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.widget);
 
         String status;
-        int statusColor = Color.parseColor("#7C829A");
+        int statusColor = Color.parseColor("#5E8A6A");
         if (cc == null) {
             v.setTextViewText(R.id.flag, "🌐");
-            v.setTextViewText(R.id.country, busy ? "Определяю…" : failed ? "Нет данных" : "Загрузка…");
+            v.setTextViewText(R.id.country, busy ? "> определяю_" : failed ? "> нет данных" : "> загрузка_");
             v.setTextViewText(R.id.ip, "");
             status = failed && !busy ? "нет сети или все источники недоступны · тап — повторить" : "подожди пару секунд";
         } else {
             String name = new Locale("", cc).getDisplayCountry(new Locale("ru"));
             if (name.isEmpty()) name = cc;
             v.setTextViewText(R.id.flag, flag(cc));
-            v.setTextViewText(R.id.country, name);
-            v.setTextViewText(R.id.ip, p.getString("ip", ""));
+            v.setTextViewText(R.id.country, "> " + name);
+            v.setTextViewText(R.id.ip, "ip=" + p.getString("ip", ""));
             String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(ts));
             if (busy) status = "обновляю…";
             else if (failed) {
@@ -85,7 +85,7 @@ public class CountryWidget extends AppWidgetProvider {
         }
         int online = p.getInt("online", 0);
         if (online > 0 && !busy) status += " · 👥 " + online;
-        v.setTextViewText(R.id.status, status);
+        v.setTextViewText(R.id.status, "# " + status);
         v.setTextColor(R.id.status, statusColor);
 
         PendingIntent pi = PendingIntent.getBroadcast(c, 0,
