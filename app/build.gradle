@@ -16,6 +16,9 @@ android {
             storePassword 'exitcountry'
             keyAlias 'exitcountry'
             keyPassword 'exitcountry'
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
         }
     }
     buildTypes {
