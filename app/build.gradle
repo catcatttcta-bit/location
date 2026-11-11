@@ -7,7 +7,7 @@ android {
         minSdk 26
         targetSdk 34
         versionCode = Integer.parseInt((project.findProperty('verCode') ?: '2').toString())
-        versionName '1.1'
+        versionName '1.2'
     }
     signingConfigs {
         shared {

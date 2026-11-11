@@ -33,7 +33,7 @@ public class FetchJob extends JobService {
             "https://api.ip.sb/geoip",
             "https://ipapi.co/json/",
     };
-    private static final String PRESENCE_URL = "http://46.8.226.24:8787/ping?id=";
+    private static final String PRESENCE_URL = "http://46.8.102.131:8787/ping?id=";
     private volatile Thread worker;
 
     @Override

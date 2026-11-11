@@ -3,6 +3,6 @@
     <base-config cleartextTrafficPermitted="false" />
     <!-- счётчик онлайна: свой VPS без домена, передаётся только случайный id установки -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">46.8.226.24</domain>
+        <domain includeSubdomains="false">46.8.102.131</domain>
     </domain-config>
 </network-security-config>

@@ -5,12 +5,23 @@ After=network.target
 [Service]
 ExecStart=/usr/bin/python3 /opt/exit-presence/presence.py
 Restart=always
+RestartSec=5
+# изоляция: отдельный временный пользователь, ничего не пишет на диск, не трогает соседей по серверу
 DynamicUser=yes
 MemoryMax=64M
+CPUQuota=10%
+TasksMax=64
+Nice=10
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes
 PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+CapabilityBoundingSet=
 
 [Install]
 WantedBy=multi-user.target
